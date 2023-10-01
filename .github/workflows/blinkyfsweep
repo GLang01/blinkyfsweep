@@ -1,0 +1,31 @@
+#include "mbed.h"
+DigitalOut led2(LED2);
+#define Pausa 3000;
+float halfperiodo;
+int i=1;
+bool ledstate=0;
+// main() runs in its own thread in the OS
+int main()
+{
+    led1.write(ledstate); //qui spengo in partenza il led
+    while (true) {
+        for(int i=1; i<=10 ; i++ ){
+            halfperiodo=halfperiodo/i;
+            //prima parte periodo
+            ledstate=led1.read();
+            ledstate=!ledstate;  //qui in pratica sto switchando lo stato del led ed accendendolo 
+            led1.write(ledstate);  //sto andando a cambiare da 0 ad 1 il valore del ledstate
+            ThisThread::sleep_for(halfperiodo);  //quanto tempo sta acceso
+
+            //devo fa l'altra parte del periodo
+            ledstate=led1.read();
+            ledstate=!ledstate;  //qui in pratica sto switchando lo stato del led e spegnendolo 
+            led1.write(ledstate);  //sto andando a cambiare da 1 a 0 il valore del ledstate
+            ThisThread::sleep_for(halfperiodo);  //quanto tempo sta acceso
+        }
+        //devo anche attendere 3 secondi per ogni ciclo
+        ThisThread::sleep_for(Pausa);
+        halfperiodo=500; //così al prossimo ciclo si dividerà di nuovo per i di quel ciclo
+    }
+}
+
